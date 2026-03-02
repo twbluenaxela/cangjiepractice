@@ -17,6 +17,7 @@
         <button class="nav-btn" data-mode="phrase">詞句練習</button>
         <button class="nav-btn" data-mode="speed">快打測試</button>
         <button class="nav-btn" data-mode="blind">盲打練習</button>
+        <button class="nav-btn" data-mode="lookup">查碼</button>
         <button class="nav-btn" data-mode="radical">字根表</button>
     </nav>
 
@@ -151,6 +152,19 @@
                 <p class="blind-hint">輸入時不會顯示倉頡碼，按 Enter 確認</p>
             </div>
             <div class="feedback" id="blind-feedback"></div>
+        </div>
+    </section>
+
+    <!-- Lookup Mode -->
+    <section id="mode-lookup" class="mode-section">
+        <div class="practice-area">
+            <textarea id="lookup-input" class="lookup-input" placeholder="在此貼上或輸入任何中文字句..."></textarea>
+            <div class="lookup-actions">
+                <button id="btn-lookup" class="btn-action">查碼</button>
+                <button id="btn-lookup-clear" class="btn-secondary">清除</button>
+                <button id="btn-lookup-practice" class="btn-secondary">用此句練習</button>
+            </div>
+            <div id="lookup-results" class="lookup-results"></div>
         </div>
     </section>
 

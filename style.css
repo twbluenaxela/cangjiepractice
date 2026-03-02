@@ -321,6 +321,88 @@ header h1 {
     color: var(--danger);
 }
 
+/* === Lookup Mode === */
+.lookup-input {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    resize: vertical;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.lookup-input:focus {
+    border-color: var(--primary);
+}
+
+.lookup-actions {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.lookup-results {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.lookup-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 6px;
+    min-width: 72px;
+    background: var(--surface);
+    transition: box-shadow 0.2s;
+}
+
+.lookup-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.lookup-card.no-code {
+    opacity: 0.45;
+}
+
+.lookup-char {
+    font-size: 1.6rem;
+    line-height: 1.3;
+    font-family: "Noto Serif TC", "Source Han Serif TC", serif, "PingFang TC", "Microsoft JhengHei";
+}
+
+.lookup-radical {
+    font-size: 0.85rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-top: 2px;
+    letter-spacing: 1px;
+}
+
+.lookup-qwerty {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    font-family: monospace;
+    margin-top: 1px;
+    letter-spacing: 1px;
+}
+
+.lookup-separator {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    padding: 0 2px;
+    align-self: stretch;
+}
+
 /* === Phrase Practice === */
 .phrase-display {
     text-align: center;

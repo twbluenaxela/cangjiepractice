@@ -221,7 +221,7 @@ function switchMode(mode) {
     });
 
     // Show/hide stats bar based on mode
-    $('stats-bar').style.display = mode === 'radical' ? 'none' : 'flex';
+    $('stats-bar').style.display = (mode === 'radical' || mode === 'lookup') ? 'none' : 'flex';
 
     // Stop any running timers
     if (state.timerInterval) {
@@ -241,6 +241,7 @@ function switchMode(mode) {
         case 'phrase': initPhraseMode(); break;
         case 'speed': initSpeedMode(); break;
         case 'blind': initBlindMode(); break;
+        case 'lookup': initLookupMode(); break;
         case 'radical': renderRadicalTable(); break;
     }
 }
@@ -695,6 +696,95 @@ function checkBlindAnswer(value) {
 }
 
 // =============================================
+// Lookup Mode
+// =============================================
+
+function initLookupMode() {
+    $('lookup-input').focus();
+}
+
+function performLookup() {
+    const text = $('lookup-input').value.trim();
+    const container = $('lookup-results');
+    container.innerHTML = '';
+
+    if (!text) return;
+
+    for (const char of text) {
+        // Non-CJK characters (spaces, punctuation, newlines) render as separators
+        if (!CANGJIE3_DATA[char]) {
+            if (/\s/.test(char)) {
+                const sep = document.createElement('div');
+                sep.className = 'lookup-separator';
+                sep.textContent = ' ';
+                container.appendChild(sep);
+            } else {
+                const card = document.createElement('div');
+                card.className = 'lookup-card no-code';
+                card.innerHTML = `
+                    <div class="lookup-char">${char}</div>
+                    <div class="lookup-radical">-</div>
+                    <div class="lookup-qwerty">-</div>
+                `;
+                container.appendChild(card);
+            }
+            continue;
+        }
+
+        const codes = CANGJIE3_DATA[char];
+        const code = codes[0]; // primary code
+        const radicals = codeToRadicals(code);
+        const qwerty = code.toUpperCase();
+
+        const card = document.createElement('div');
+        card.className = 'lookup-card';
+        card.innerHTML = `
+            <div class="lookup-char">${char}</div>
+            <div class="lookup-radical">${radicals}</div>
+            <div class="lookup-qwerty">${qwerty}</div>
+        `;
+
+        // Show all codes on hover/tap if multiple
+        if (codes.length > 1) {
+            const alt = codes.slice(1).map(c => codeToRadicals(c) + ' (' + c.toUpperCase() + ')').join('\n');
+            card.title = '其他碼: ' + alt;
+        }
+
+        container.appendChild(card);
+    }
+}
+
+function lookupPractice() {
+    const text = $('lookup-input').value.trim();
+    if (!text) return;
+
+    // Filter to characters that have cangjie codes
+    const chars = [...text].filter(c => CANGJIE3_DATA[c]);
+    if (chars.length === 0) return;
+
+    // Switch to single mode and load these chars
+    state.mode = 'single';
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === 'single');
+    });
+    document.querySelectorAll('.mode-section').forEach(sec => {
+        sec.classList.toggle('active', sec.id === 'mode-single');
+    });
+    $('stats-bar').style.display = 'flex';
+
+    resetStats();
+    state.currentChars = chars.slice(0, 20); // cap at 20
+    state.currentCharIndex = 0;
+    renderCharQueue();
+    showCurrentChar();
+    clearInput('cangjie-input');
+    $('cangjie-display').textContent = '';
+    $('feedback').textContent = '';
+    $('feedback').className = 'feedback';
+    focusInput('cangjie-input');
+}
+
+// =============================================
 // Radical Table
 // =============================================
 
@@ -924,6 +1014,15 @@ function init() {
 
     // Click on blind input area to focus
     $('blind-input-display').addEventListener('click', focusBlindInput);
+
+    // Lookup mode
+    $('btn-lookup').addEventListener('click', performLookup);
+    $('btn-lookup-clear').addEventListener('click', () => {
+        $('lookup-input').value = '';
+        $('lookup-results').innerHTML = '';
+        $('lookup-input').focus();
+    });
+    $('btn-lookup-practice').addEventListener('click', lookupPractice);
 
     // Virtual keyboard
     initVirtualKeyboard();
