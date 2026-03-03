@@ -857,20 +857,40 @@ function initVirtualKeyboard() {
     const vk = $('virtual-keyboard');
     if (state.isMobile) {
         vk.classList.add('show');
+
+        // Suppress native keyboard on all cangjie inputs
+        document.querySelectorAll('.cangjie-input').forEach(input => {
+            input.setAttribute('inputmode', 'none');
+        });
     }
 
-    // Handle virtual key presses
-    vk.addEventListener('click', (e) => {
+    // Track whether touch handled the event to avoid double-fire
+    let touchHandled = false;
+
+    // Touch handler — fires key action and prevents focus-stealing
+    vk.addEventListener('touchstart', (e) => {
         const keyBtn = e.target.closest('.vk-key');
         if (!keyBtn) return;
-
-        const key = keyBtn.dataset.key;
-        handleVirtualKey(key);
+        e.preventDefault();
+        touchHandled = true;
+        keyBtn.classList.add('vk-active');
+        handleVirtualKey(keyBtn.dataset.key);
     });
 
-    // Prevent virtual keyboard from stealing focus
-    vk.addEventListener('touchstart', (e) => {
+    vk.addEventListener('touchend', (e) => {
         e.preventDefault();
+        vk.querySelectorAll('.vk-active').forEach(k => k.classList.remove('vk-active'));
+    });
+
+    // Click handler — desktop fallback only
+    vk.addEventListener('click', (e) => {
+        if (touchHandled) {
+            touchHandled = false;
+            return;
+        }
+        const keyBtn = e.target.closest('.vk-key');
+        if (!keyBtn) return;
+        handleVirtualKey(keyBtn.dataset.key);
     });
 
     // Re-check on resize
@@ -960,11 +980,6 @@ function focusInput(id) {
         const input = $(id);
         if (input && !input.disabled) {
             input.focus();
-            // On mobile, prevent native keyboard
-            if (state.isMobile) {
-                input.setAttribute('readonly', 'readonly');
-                setTimeout(() => input.removeAttribute('readonly'), 50);
-            }
         }
     }, 100);
 }
