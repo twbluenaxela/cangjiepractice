@@ -1039,6 +1039,13 @@ function init() {
     });
     $('btn-lookup-practice').addEventListener('click', lookupPractice);
 
+    // Reset stats button
+    $('btn-reset-stats').addEventListener('click', () => {
+        resetStats();
+        $('stat-speed').textContent = '-';
+        $('stat-timer').textContent = '0:00';
+    });
+
     // Virtual keyboard
     initVirtualKeyboard();
 
