@@ -985,10 +985,38 @@ function focusInput(id) {
 }
 
 // =============================================
+// Dark Mode
+// =============================================
+
+function initTheme() {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        $('theme-toggle').textContent = '\u2600'; // sun
+    }
+}
+
+function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        $('theme-toggle').textContent = '\u263E'; // moon
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        $('theme-toggle').textContent = '\u2600'; // sun
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+// =============================================
 // Event Listeners
 // =============================================
 
 function init() {
+    // Theme
+    initTheme();
+    $('theme-toggle').addEventListener('click', toggleTheme);
     // Navigation
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => switchMode(btn.dataset.mode));
@@ -1038,6 +1066,13 @@ function init() {
         $('lookup-input').focus();
     });
     $('btn-lookup-practice').addEventListener('click', lookupPractice);
+
+    // Reset stats button
+    $('btn-reset-stats').addEventListener('click', () => {
+        resetStats();
+        $('stat-speed').textContent = '-';
+        $('stat-timer').textContent = '0:00';
+    });
 
     // Virtual keyboard
     initVirtualKeyboard();
