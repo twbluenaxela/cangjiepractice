@@ -990,7 +990,10 @@ function focusInput(id) {
 
 function initTheme() {
     const saved = localStorage.getItem('theme');
-    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    if (saved === 'light') {
+        document.documentElement.removeAttribute('data-theme');
+        $('theme-toggle').textContent = '\u263E'; // moon
+    } else {
         document.documentElement.setAttribute('data-theme', 'dark');
         $('theme-toggle').textContent = '\u2600'; // sun
     }

@@ -90,11 +90,14 @@ header h1 {
     border: none;
     border-radius: var(--radius);
     color: white;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     cursor: pointer;
-    padding: 6px 10px;
+    padding: 8px 12px;
     transition: background 0.2s;
     line-height: 1;
+    z-index: 10;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .theme-toggle:hover {
